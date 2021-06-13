@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Complain;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -26,6 +27,9 @@ class ComplainController extends Controller
      */
     public function create()
     {
+        return view('admin.complain.create', [
+            'title' => 'Buat Complain | Techpolitan'
+        ]);
     }
 
     /**
@@ -36,7 +40,14 @@ class ComplainController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'employee_id' => 'required',
+            'complain' => 'required'
+        ]);
+
+        Complain::create($request->only('employee_id', 'complain'));
+
+        return redirect()->route('admin.complain.index')->with('success', 'Data Berhasil Ditambahkan');
     }
 
     /**
@@ -81,6 +92,8 @@ class ComplainController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Complain::destroy($id);
+
+        return redirect()->route('admin.complain.index')->with('success', 'Data Berhasil Dihapus');
     }
 }
