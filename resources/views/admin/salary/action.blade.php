@@ -1,3 +1,5 @@
+<a href="{{ route('admin.salary.print', $model) }}" class="btn btn-success">Cetak Slip Gaji</a>
+
 <button href="{{ route('admin.salary.destroy', $model) }}" class="btn btn-danger" id="delete">Hapus</button>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>

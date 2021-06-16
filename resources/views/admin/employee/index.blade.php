@@ -73,6 +73,7 @@
           $('#dataTable').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: true,
             ajax: '{{ route('admin.employee.data') }}',
             columns: [
               { data: 'DT_RowIndex', orderable: false, searchable: false },

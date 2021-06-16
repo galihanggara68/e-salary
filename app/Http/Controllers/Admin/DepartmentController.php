@@ -8,6 +8,15 @@ use App\Departments;
 
 class DepartmentController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware("permission:create department")->only(["create", "store"]);
+        $this->middleware("permission:read department")->only(["index"]);
+        $this->middleware("permission:update department")->only(["edit", "update"]);
+        $this->middleware("permission:delete department")->only(["destroy"]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -40,7 +49,7 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [        
+        $this->validate($request, [
             'name' => 'required|min:10',
             'status' => 'required'
         ]);
@@ -104,5 +113,4 @@ class DepartmentController extends Controller
 
         return redirect()->route('admin.department.index')->with('danger', 'Data Berhasil Dihapus');
     }
-
 }

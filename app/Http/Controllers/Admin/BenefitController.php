@@ -11,6 +11,14 @@ use Facade\FlareClient\Http\Response;
 
 class BenefitController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware("permission:create group")->only(["create", "store"]);
+        $this->middleware("permission:read group")->only(["index"]);
+        $this->middleware("permission:update group")->only(["edit", "update", "updateAjax"]);
+        $this->middleware("permission:delete group")->only(["destroy", "deleteAjax"]);
+    }
+
     /**
      * Display a listing of the resource.
      *

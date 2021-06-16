@@ -9,10 +9,20 @@ use App\Salary;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 
 class SalaryController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware("permission:create salary")->only(["create", "store"]);
+        $this->middleware("permission:read salary")->only(["index", "print"]);
+        $this->middleware("permission:update salary")->only(["edit", "update"]);
+        $this->middleware("permission:delete salary")->only(["destroy"]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -165,5 +175,48 @@ class SalaryController extends Controller
             return redirect()->route('admin.salary.index')->with('danger', 'Data Gagal Didelete');
         }
         return redirect()->route('admin.salary.index')->with('success', 'Data Berhasil Didelete');
+    }
+
+    public function print($id)
+    {
+        $salary = Salary::Find($id);
+        $employee = $salary->employee;
+        $date = Carbon::parse($salary->month);
+
+        $sick = $employee->attendances()->where([
+            [DB::raw("month(time)"), "=", $date->month],
+            [DB::raw("year(time)"), "=", $date->year],
+            ["description", "=", "sakit"]
+        ])->orWhere("description", "izin")->count();
+        $attend = $employee->totalAttend($date->month, $date->year);
+        $absent = 22 - $attend;
+        $late = $employee->totalLate($date->month, $date->year);
+        $totalBenefits = array_reduce($employee->group->benefit()->pluck("amount")->toArray(), function ($carry, $item) {
+            $carry += $item;
+            return $carry;
+        });
+
+        $total = (round($attend / 22)) * $employee->salary + $totalBenefits - (($late * 15000));
+        $dataTables = [
+            ["Gaji", $employee->salary, "Potongan Terlambat", ($late * 15000)],
+            array_map(function ($g, $p) {
+                return [$g["name"], $g["amount"], $p[0], $p[1]];
+            }, $salary->bonuses->toArray(), [
+                ["Potongan Absen", $employee->salary - ((round($attend / 22)) * $employee->salary)],
+            ])[0]
+        ];
+        // dd($dataTables);
+        $view = view("pdf.slip-gaji", [
+            "dataTables" => $dataTables,
+            "employee" => $employee,
+            "nett" => $total,
+            "totalGaji" => (round($attend / 22)) * $employee->salary + $totalBenefits,
+            "totalPotongan" => ($employee->salary - ((round($attend / 22)) * $employee->salary)) + (($late * 15000)),
+            "date" => Carbon::parse($salary->month)
+        ]);
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadHTML($view->render());
+        return $pdf->stream();
     }
 }

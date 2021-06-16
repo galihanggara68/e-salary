@@ -26,11 +26,10 @@ Route::resource('complain', 'ComplainController');
 
 Route::get('/salary/data', 'DataController@salaries')->name('salary.data');
 Route::resource('salary', 'SalaryController');
+Route::get('salary/print/{id}', 'SalaryController@print')->name("salary.print");
 Route::get("/salary/create/next", "SalaryController@getEmployeeData")->name("salary.employee");
 
 Route::get('/benefit/data', 'DataController@benefits')->name('benefit.data');
 Route::resource('benefit', 'BenefitController');
 Route::put("/benefit/updateajax/{id}", 'BenefitController@updateAjax');
 Route::delete("/benefit/deleteajax/{id}", 'BenefitController@deleteAjax');
-
-// Route::resource('laporan', 'LaporanController');

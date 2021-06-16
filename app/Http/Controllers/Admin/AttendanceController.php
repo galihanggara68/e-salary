@@ -10,6 +10,13 @@ use App\User;
 
 class AttendanceController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware("permission:create attendance")->only(["create", "store"]);
+        $this->middleware("permission:read attendance")->only(["index"]);
+    }
+
     /**
      * Display a listing of the resource.
      *

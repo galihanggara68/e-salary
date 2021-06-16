@@ -177,6 +177,24 @@
                 </div>
 
                 <div class="box-body">
+                    <div class="form-group @error('role') has-error @enderror">
+                        <label for="" class="col-sm-2 control-label">Role</label>
+
+                        <div class="col-sm-10">
+                            <select name="role" class="form-control select2">
+
+                                @foreach($roles as $role)
+                                <option {{ (old('role') ?? $employee->user->roles()->first()->name) == $role->name ? "selected" : null }}  value="{{$role->name}}">{{strtoupper($role->name)}}</value>
+                                @endforeach
+                            </select>
+                            @error('role')
+                                <span class="help-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-body">
                     <div class="form-group @error('status') has-error @enderror">
                         <label for="" class="col-sm-2 control-label">Status</label>
 

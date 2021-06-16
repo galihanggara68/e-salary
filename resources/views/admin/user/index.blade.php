@@ -65,7 +65,7 @@
           $('#dataTable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: '{{ route('admin.user.data') }}',
+            ajax: '{{ route('admin.user.data', ["type" => $type]) }}',
             columns: [
               { data: 'DT_RowIndex', orderable: false, searchable: false },
               { data: 'name' },

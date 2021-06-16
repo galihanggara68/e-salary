@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class GroupController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware("permission:create group")->only(["create", "store"]);
+        $this->middleware("permission:read group")->only(["index"]);
+        $this->middleware("permission:update group")->only(["edit", "update"]);
+        $this->middleware("permission:delete group")->only(["destroy"]);
+    }
+
     /**
      * Display a listing of the resource.
      *

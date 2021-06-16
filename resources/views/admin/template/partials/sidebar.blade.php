@@ -9,7 +9,7 @@
 
         <div class="pull-left info">
           <p>{{ auth()->user()->name }}</p>
-           <i class="fa fa-circle text-success"></i> Online
+            <i class="fa fa-circle text-success"></i> Online
         </div>
       </div>
 
@@ -17,67 +17,85 @@
       <ul class="sidebar-menu" data-widget="tree">
         <!--<li class="header">MAIN NAVIGATION</li> -->
 
-        <li class="{{ Route::currentRouteNamed('admin.dashboard')? 'active' : '' }}">
-        <a href="{{ route('admin.dashboard') }}">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-          </a>
-        </li>
-
-        <li class="{{ Route::currentRouteNamed('admin.employee.index')? 'active' : '' }}">
-          <a href="{{ route('admin.employee.index') }}">
-            <i class="fa fa-users"></i> <span>Karyawan</span>
-          </a>
-        </li>
-
-        <li class="{{ Route::currentRouteNamed('admin.department.index')? 'active' : '' }}">
-          <a href="{{ route('admin.department.index') }}">
-            <i class="fa fa-building"></i> <span>Department</span>
-          </a>
-        </li>
-
-        <li class="{{ Route::currentRouteNamed('admin.position.index')? 'active' : '' }}">
-            <a href="{{ route('admin.position.index') }}">
-                <i class="fa fa-black-tie"></i> <span>Jabatan</span>
+        @can("admin")
+            <li class="{{ Route::currentRouteNamed('admin.dashboard')? 'active' : '' }}">
+            <a href="{{ route('admin.dashboard') }}">
+                <i class="fa fa-dashboard"></i> <span>Dashboard</span>
             </a>
-        </li>
+            </li>
+        @endcan
 
-        <li class="{{ Route::currentRouteNamed('admin.group.index')? 'active' : '' }}">
-            <a href="{{ route('admin.group.index') }}">
-                <i class="fa fa-suitcase"></i> <span>Golongan</span>
+        @can("read employee")
+            <li class="{{ Route::currentRouteNamed('admin.employee.index')? 'active' : '' }}">
+            <a href="{{ route('admin.employee.index') }}">
+                <i class="fa fa-users"></i> <span>Karyawan</span>
             </a>
-        </li>
+            </li>
+        @endcan
 
-        <li class="{{ Route::currentRouteNamed('admin.attendance.index')? 'active' : '' }}">
-          <a href="{{ route('admin.attendance.index') }}">
-            <i class="fa fa-file"></i> <span> Absensi</span>
-          </a>
-        </li>
+        @can("read department")
+            <li class="{{ Route::currentRouteNamed('admin.department.index')? 'active' : '' }}">
+            <a href="{{ route('admin.department.index') }}">
+                <i class="fa fa-building"></i> <span>Department</span>
+            </a>
+            </li>
+        @endcan
 
-        <li class="{{ Route::currentRouteNamed('admin.salary.index')? 'active' : '' }}">
-          <a href="{{ route('admin.salary.index') }}">
-            <i class="fa fa-money"></i> <span> Penggajian </span>
-          </a>
-        </li>
+        @can("read position")
+            <li class="{{ Route::currentRouteNamed('admin.position.index')? 'active' : '' }}">
+                <a href="{{ route('admin.position.index') }}">
+                    <i class="fa fa-black-tie"></i> <span>Jabatan</span>
+                </a>
+            </li>
+        @endcan
 
-        <li class=" ">
-          <a href="{{ route('admin.complain.index') }}">
-            <i class="fa fa-database"></i> <span>Laporan</span>
-          </a>
-        </li>
+        @can("read group")
+            <li class="{{ Route::currentRouteNamed('admin.group.index')? 'active' : '' }}">
+                <a href="{{ route('admin.group.index') }}">
+                    <i class="fa fa-suitcase"></i> <span>Golongan</span>
+                </a>
+            </li>
+        @endcan
 
-        <li class="treeview {{ Route::currentRouteNamed('admin.user.index') || Route::currentRouteNamed('admin.user.employee')? 'active' : '' }}">
-          <a href="#">
-            <i class="fa fa-file-archive-o"></i>
-            <span>Manage User</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="{{ route('admin.user.index') }}"><i class="fa fa-list-alt"></i> Admin</a></li>
-            <li><a href="{{ route('admin.user.employee') }}"><i class="fa fa-list-alt"></i> Karyawan</a></li>
-          </ul>
-        </li>
+        @can("read attendance")
+            <li class="{{ Route::currentRouteNamed('admin.attendance.index')? 'active' : '' }}">
+            <a href="{{ route('admin.attendance.index') }}">
+                <i class="fa fa-file"></i> <span> Absensi</span>
+            </a>
+            </li>
+        @endcan
+
+        @can("read salary")
+            <li class="{{ Route::currentRouteNamed('admin.salary.index')? 'active' : '' }}">
+            <a href="{{ route('admin.salary.index') }}">
+                <i class="fa fa-money"></i> <span> Penggajian </span>
+            </a>
+            </li>
+        @endcan
+
+        @can("read complain")
+            <li class=" ">
+            <a href="{{ route('admin.complain.index') }}">
+                <i class="fa fa-database"></i> <span>Laporan</span>
+            </a>
+            </li>
+        @endcan
+
+        @can("read user")
+            <li class="treeview {{ Route::currentRouteNamed('admin.user.index') || Route::currentRouteNamed('admin.user.employee')? 'active' : '' }}">
+            <a href="#">
+                <i class="fa fa-file-archive-o"></i>
+                <span>Manage User</span>
+                <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+                <li><a href="{{ route('admin.user.index') }}"><i class="fa fa-list-alt"></i> Admin</a></li>
+                <li><a href="{{ route('admin.user.employee') }}"><i class="fa fa-list-alt"></i> Karyawan</a></li>
+            </ul>
+            </li>
+        @endcan
 
        <!-- <li class="header">MENU</li> -->
         <li>

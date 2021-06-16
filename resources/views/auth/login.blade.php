@@ -94,38 +94,6 @@
 					</div>
 
 				</form>
-
-				$data = mysqli_fetch_assoc($login);
-
- // cek jika user login sebagai admin
- if($data['level']=="admin"){
-	 // buat session login dan username
-	 $_SESSION['username'] = $username;
-	 $_SESSION['level'] = "admin";
-	 // alihkan ke halaman dashboard admin
-	 header("location:halaman_admin.php");
-
- // cek jika user login sebagai pegawai
- }else if($data['level']=="pegawai"){
-	 // buat session login dan username
-	 $_SESSION['username'] = $username;
-	 $_SESSION['level'] = "pegawai";
-	 // alihkan ke halaman dashboard pegawai
-	 header("location:halaman_pegawai.php");
-
- // cek jika user login sebagai pengurus
- }else if($data['level']=="pengurus"){
-	 // buat session login dan username
-	 $_SESSION['username'] = $username;
-	 $_SESSION['level'] = "pengurus";
-	 // alihkan ke halaman dashboard pengurus
-	 header("location:halaman_pengurus.php");
-
- }else{
-
-	 // alihkan ke halaman login kembali
-	 header("location:index.php?pesan=gagal");
- }
 			</div>
 		</div>
 	</div>

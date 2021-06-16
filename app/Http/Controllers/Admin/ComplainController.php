@@ -4,10 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Complain;
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Http\Request;
 
 class ComplainController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware("permission:create complain")->only(["create", "store"]);
+        $this->middleware("permission:read complain")->only(["index"]);
+        $this->middleware("permission:update complain")->only(["edit", "update"]);
+        $this->middleware("permission:delete complain")->only(["destroy"]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -40,12 +50,14 @@ class ComplainController extends Controller
      */
     public function store(Request $request)
     {
+
         $this->validate($request, [
-            'employee_id' => 'required',
             'complain' => 'required'
         ]);
-
-        Complain::create($request->only('employee_id', 'complain'));
+        Complain::create([
+            "employee_id" => auth()->user()->employee->id,
+            "complain" => $request->complain
+        ]);
 
         return redirect()->route('admin.complain.index')->with('success', 'Data Berhasil Ditambahkan');
     }

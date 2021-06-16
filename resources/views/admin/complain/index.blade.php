@@ -18,7 +18,9 @@
         <div class="box">
           <div class="box-header">
             <h3 class="box-title">Laporan</h3>
-
+            <div style="float: right!important">
+                <a href="{{ route('admin.complain.create') }}" class="btn btn-primary btn-sm">+ Tambah Data Complain</a>
+            </div>
           </div>
           <!-- /.box-header -->
           <div class="box-body">

@@ -14,6 +14,7 @@ use App\Groups;
 use App\Salary;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DataController extends Controller
@@ -80,17 +81,28 @@ class DataController extends Controller
 
     public function attendances()
     {
+        $user = Auth()->user();
+
         $test = Employees::from("employees AS e")
             ->join("attendances AS a", "a.employee_id", "=", "e.id")
             ->join("attendances AS b", function ($join) {
                 $join->on("a.time", "!=", "b.time");
                 $join->on("a.employee_id", "=", "b.employee_id");
-            })
-            ->where([
+            });
+        $result = null;
+        if (!$user->hasRole("admin")) {
+            $result = $test->where([
                 [DB::raw("hour(a.time)"), "<", 12],
-                [DB::raw("date(a.time)"), "=", DB::raw("date(b.time)")]
+                [DB::raw("date(a.time)"), "=", DB::raw("date(b.time)")],
+                ["a.employee_id", "=", $user->employee->id]
             ])->get(["a.employee_id", "e.name", "a.time AS IN", "b.time AS OUT", "a.description"]);
-        return datatables()->of($test)
+        } else {
+            $result = $test->where([
+                [DB::raw("hour(a.time)"), "<", 12],
+                [DB::raw("date(a.time)"), "=", DB::raw("date(b.time)")],
+            ])->get(["a.employee_id", "e.name", "a.time AS IN", "b.time AS OUT", "a.description"]);
+        }
+        return datatables()->of($result)
             ->addColumn('total', function ($model) {
                 $in = Carbon::parse($model->IN);
                 $out = Carbon::parse($model->OUT);
@@ -105,9 +117,11 @@ class DataController extends Controller
             ->toJson();
     }
 
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::orderBy('name', 'ASC');
+        $users = User::whereHas("roles", function ($q) use ($request) {
+            $q->where("name", $request->type == "admin" ? "=" : "!=", "admin");
+        })->orderBy("name", "ASC")->get();
 
         return datatables()->of($users)
             ->addColumn('action', 'admin.user.action')
@@ -117,7 +131,13 @@ class DataController extends Controller
 
     public function complains()
     {
-        $complains = Complain::orderBy('created_at', 'ASC');
+        $complains = null;
+        $user = auth()->user();
+        if ($user->hasRole("admin")) {
+            $complains = Complain::orderBy('created_at', 'ASC');
+        } else {
+            $complains = Complain::where("employee_id", $user->employee->id)->orderBy('created_at', 'ASC');
+        }
 
         return datatables()->of($complains)
             ->addColumn('action', 'admin.complain.action')

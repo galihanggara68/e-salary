@@ -8,6 +8,15 @@ use App\Positions;
 
 class PositionController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware("permission:create position")->only(["create", "store"]);
+        $this->middleware("permission:read position")->only(["index"]);
+        $this->middleware("permission:update position")->only(["edit", "update"]);
+        $this->middleware("permission:delete position")->only(["destroy"]);
+    }
+
     /**
      * Display a listing of the resource.
      *

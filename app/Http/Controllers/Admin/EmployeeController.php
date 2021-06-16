@@ -15,9 +15,19 @@ use Error;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class EmployeeController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware("permission:read employee")->only(["index"]);
+        $this->middleware("permission:create employee")->only(["create", "store"]);
+        $this->middleware("permission:update employee")->only(["edit", "update"]);
+        $this->middleware("permission:delete employee")->only(["destroy"]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -41,7 +51,8 @@ class EmployeeController extends Controller
             'title' => 'Tambah Karyawan | Techpolitan',
             'positions' => Positions::all(),
             'groups' => Groups::all(),
-            'departments' => Departments::all()
+            'departments' => Departments::all(),
+            'roles' => Role::all()
         ]);
     }
 
@@ -64,7 +75,8 @@ class EmployeeController extends Controller
             'department_id' => 'required',
             'status' => 'required',
             'salary' => 'required',
-            'norek' => 'required'
+            'norek' => 'required',
+            'role' => 'required'
         ]);
 
         try {
@@ -73,11 +85,10 @@ class EmployeeController extends Controller
                 "email" => $request->email,
                 "name" => $request->name,
                 "password" => Hash::make(explode("@", $request->email)[0] . Carbon::now()->format("Y")),
-                'email_verified_at' => Carbon::now()->format("Y-m-d H:m:s"),
-                'role_id' => 2
+                'email_verified_at' => Carbon::now()->format("Y-m-d H:m:s")
             ]);
 
-            $user->assignRole("user");
+            $user->assignRole($request->role);
 
             $data = [
                 'name' => $request->name,
