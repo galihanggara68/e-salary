@@ -140,7 +140,8 @@ class EmployeeController extends Controller
             'employee' => $employee,
             'departments' => Departments::orderBy('name', 'ASC')->get(),
             'positions' => Positions::orderBy('name', 'ASC')->get(),
-            'groups' => Groups::all()
+            'groups' => Groups::all(),
+            'roles' => Role::all()
         ]);
     }
 
